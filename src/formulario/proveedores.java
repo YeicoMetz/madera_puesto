@@ -8,18 +8,25 @@ import conf.conexion;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.util.JRLoader;
+import net.sf.jasperreports.view.JasperViewer;
 
-/**
- *
- * @author Yeico
- */
+
 public class proveedores extends javax.swing.JFrame {
      int xMouse, yMouse;
     conexion cc = new conexion();
@@ -46,6 +53,7 @@ public class proveedores extends javax.swing.JFrame {
         nombrepro.requestFocus(true);
      }
      
+     
       private void actualizarCamposDeTextoConFilaSeleccionada() {
     int filaSeleccionada = tabla1.getSelectedRow();
     if (filaSeleccionada != -1) {
@@ -68,6 +76,7 @@ public class proveedores extends javax.swing.JFrame {
         encargadopro.setText(encargadoValor.toString());
     }
 }
+      
        public void agregar_base() {
     String[] registros = new String[10];
     String id = idenpro.getText();
@@ -254,6 +263,7 @@ public class proveedores extends javax.swing.JFrame {
         eliminar1 = new javax.swing.JPanel();
         eliminar = new javax.swing.JLabel();
         jSeparator8 = new javax.swing.JSeparator();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -674,6 +684,14 @@ public class proveedores extends javax.swing.JFrame {
         jPanel1.add(eliminar1, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 560, 90, 30));
         jPanel1.add(jSeparator8, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 510, 230, 10));
 
+        jButton1.setText("jButton1");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 100, -1, -1));
+
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 650));
 
         pack();
@@ -907,6 +925,46 @@ public class proveedores extends javax.swing.JFrame {
         eliminar1.setBackground(colorPersonalizado);// TODO add your handling code here:
     }//GEN-LAST:event_eliminarMouseExited
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+          try {
+        // Ruta al informe JasperReport compilado
+        String reportPath = "src/reportes/report1.jasper";
+
+        // Verificar si el archivo del informe existe
+        File reportFile = new File(reportPath);
+        if (!reportFile.exists()) {
+            System.out.println("El archivo del informe no se encuentra en la ruta: " + reportPath);
+            return;
+        }
+
+        // Cargar el informe JasperReport compilado
+        JasperReport proveedores = (JasperReport) JRLoader.loadObjectFromFile(reportPath);
+
+        // Conectar a la base de datos
+        conexion cc = new conexion();
+        Connection cx = cc.conectar();
+        
+        if (cx == null) {
+            System.out.println("No se pudo establecer una conexión a la base de datos.");
+            return;
+        }
+
+        JasperPrint jprint = JasperFillManager.fillReport(proveedores, null, cx);
+
+        // Mostrar el informe en un visor
+        JasperViewer view = new JasperViewer(jprint, false);
+        view.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        view.setVisible(true);
+    } catch (JRException ex) {
+        // Manejo de excepciones
+        ex.printStackTrace();
+        System.out.println("Error al generar el informe: " + ex.getMessage());
+    }
+
+
+
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -953,6 +1011,7 @@ public class proveedores extends javax.swing.JFrame {
     private javax.swing.JPanel guardar;
     private javax.swing.JLabel guardar1;
     private javax.swing.JTextField idenpro;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
